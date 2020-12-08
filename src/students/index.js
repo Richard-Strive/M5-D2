@@ -37,12 +37,27 @@ router.get("/", (req, res) => {
 /* dal server ricevo localhost:3001/users/ e qui sopra sto creando una funzione che mi permette di ricevere risposta al percorso a aggiuntivo di "/"*/
 
 router.get("/:id", (req, res) => {
-  console.log(req);
-  res.send("I AM THE RESPONSE: I AM A SIGLE STUDENT");
+  const studentsFilePath = path.join(__dirname, "students.json");
+  const fileAsBuffer = fs.readFileSync(studentsFilePath);
+  const fileAsString = fileAsBuffer.toString();
+  const studentsArray = JSON.parse(fileAsString);
+  /* qui sopra abbiamo la sintesi di quello che e' successo da linea 16 a linea 30 */
+
+  const idFromReq = req.params.id;
+  /*questo ci permette di prendere dal url della richiesta quello che coincide con "/:id"*/
+
+  const student = studentsArray.filter((student) => student.ID === idFromReq);
+  console.log(idFromReq);
+  res.send(student);
 });
 
 /* Post */
 router.post("/", (req, res) => {
+  const studentsFilePath = path.join(__dirname, "students.json");
+  const fileAsBuffer = fs.readFileSync(studentsFilePath);
+  const fileAsString = fileAsBuffer.toString();
+  const studentsArray = JSON.parse(fileAsString);
+  /* in questo caso la parte superiore serve per leggere il contenuto vecchio del nostro file*/
   console.log(req);
   res.send("I AM THE RESPONSE: STUDENT POST CREATED");
 });
