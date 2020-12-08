@@ -5,6 +5,9 @@ const router = express.Router();
 /* Posso creare piu endpoint: router.get(""), router.post("") e cosi via. In sintessi e' un percorso che mi permette di fare 
 determinate azioni al contento delle nostre "array" */
 
+const fs = require("fs");
+/* core module NON SO CHE SIGNIFICA E A COSA SERVE*/
+
 router.get("/", (req, res) => {
   console.log(req);
   res.send("I AM THE RESPONSE: LIST OF STUDENTS");
