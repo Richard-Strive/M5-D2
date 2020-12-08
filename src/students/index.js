@@ -13,19 +13,29 @@ const fs = require("fs");
 /* core module integrato su express*/
 
 router.get("/", (req, res) => {
-  const studentsFilePath = "";
+  const studentsFilePath = path.join(__dirname, "students.json");
   console.log(
     __dirname
   ); /* directory dinamica che serve a creare il path in funzione dal sistema da cui ci stiamo accededno */
   console.log(
     path.join(__dirname, "students.json")
-  ); /* l'unico modo per concatenare i path "path.join(__dirname, "students.json")"
+  ); /* l'unico modo per concatenare i path "path.join(__dirname, "students.json")"*/
+
+  const fileAsBuffer = fs.readFileSync(
+    studentsFilePath
+  ); /* questo per leggere il file. Mi ritornera' un buffer, un codice criptato leggibile solo dalle macchine*/
+  console.log(
+    fileAsBuffer.toString()
+  ); /* ==> con toString() convertiamo il buffer in qualcosa di leggibile==> poi lo convertiamo in un oggetto con JSON.parse(fileAsBuffer.toString())*/
+  console.log(JSON.parse(fileAsBuffer.toString()));
+
   /* a) stiamo creando un percorso che ci permette di ritirare i dati dal students.json visto che non abbiamo ancora un database*/
 
   // console.log(req);
-  res.send("I AM THE RESPONSE: LIST OF STUDENTS");
+  res.send(JSON.parse(fileAsBuffer.toString()));
 });
 /* dal server ricevo localhost:3001/users/ e qui sopra sto creando una funzione che mi permette di ricevere risposta al percorso a aggiuntivo di "/"*/
+
 router.get("/:id", (req, res) => {
   console.log(req);
   res.send("I AM THE RESPONSE: I AM A SIGLE STUDENT");
