@@ -15,5 +15,23 @@ router.get("/:id", (req, res) => {
   res.send("I AM THE RESPONSE: I AM A SIGLE STUDENT");
 });
 
+/* Post */
+router.post("/", (req, res) => {
+  console.log(req);
+  res.send("I AM THE RESPONSE: STUDENT POST CREATED");
+});
+/*PUT*/
+router.put("/", (req, res) => {
+  console.log(req);
+  res.send("I AM THE RESPONSE: STUDENT POST EDITED");
+});
+/*DELETE*/
+router.delete("/", (req, res) => {
+  console.log(req);
+  res.send("I AM THE RESPONSE: STUDENT POST DELETED");
+});
+
+/*Abbiamo creato dei post, delete e put per permette al user di interagire con il nostro database(con i fetch)   */
+
 module.exports = router;
 /* con questo, come su React.js, sto esportando il router */
