@@ -19,7 +19,7 @@ router.get("/", (req, res) => {
   ); /* directory dinamica che serve a creare il path in funzione dal sistema da cui ci stiamo accededno */
   console.log(
     path.join(__dirname, "students.json")
-  ); /* l'unico modo per concatenare le path "path.join(__dirname, "students.json")"
+  ); /* l'unico modo per concatenare i path "path.join(__dirname, "students.json")"
   /* a) stiamo creando un percorso che ci permette di ritirare i dati dal students.json visto che non abbiamo ancora un database*/
 
   // console.log(req);
