@@ -12,6 +12,8 @@ const path = require("path");
 const fs = require("fs");
 /* core module integrato su express*/
 
+const uniqid = require("uniqid"); /* dopo aver npm i uniqid porcediamo con l'importarlo per poter generare "automagicamente" degli id ed e' un third party module*/
+
 router.get("/", (req, res) => {
   const studentsFilePath = path.join(__dirname, "students.json");
   console.log(
@@ -58,19 +60,63 @@ router.post("/", (req, res) => {
   const fileAsString = fileAsBuffer.toString();
   const studentsArray = JSON.parse(fileAsString);
   /* in questo caso la parte superiore serve per leggere il contenuto vecchio del nostro file*/
-  console.log(req);
-  res.send("I AM THE RESPONSE: STUDENT POST CREATED");
+  const newStudent = req.body;
+  /* cosi leggiamo la richiesta del body */
+  newStudent.ID = uniqid();
+  /* diamo degli id generati ai nostri POST */
+
+  /*con "fs" interagiamo i file del sistema e in qusto caso stiamo sovrascivendo il mio students.json convertendo l'array in una stringa */
+  console.log(studentsArray);
+  studentsArray.push(newStudent);
+
+  fs.writeFileSync(studentsFilePath, JSON.stringify(studentsArray));
+  res.status(200).send(newStudent.ID);
 });
 
 /*PUT*/
-router.put("/", (req, res) => {
+router.put("/:id", (req, res) => {
+  const studentsFilePath = path.join(__dirname, "students.json");
+  const fileAsBuffer = fs.readFileSync(studentsFilePath);
+  const fileAsString = fileAsBuffer.toString();
+  const studentsArray = JSON.parse(fileAsString);
+  /*come in precedenza LEGGIAMO il file*/
+
+  const newStudentArray = studentsArray.filter(
+    (student) => student.ID !== req.params.id
+  );
+  /* qui filtro e tengo visibile tutti quelli che non ha hanno L'id uguale a quello  del params.id vale la stessa cosa anche qui*/
+
+  const modifiedStudent = req.body;
+  modifiedStudent.ID = req.params.id;
+  /* In quanto post quando modificiamo qualcosa dobbiamo inserire il body del req e in aggiunta abbiamo inserito un id che coincidesse con il param */
+
+  newStudentArray.push(modifiedStudent);
+  /* Nel nuovo array push lo student modificato */
+
+  fs.writeFileSync(studentsFilePath, JSON.stringify(newStudentArray));
+  /*qui converto il mio nuovo array in stringa e lo riscrivo nel file JSON anche sta volta  NB. I parametri sono: PERCORSO FILE E IL FILE STRINGATO*/
   console.log(req);
-  res.send("I AM THE RESPONSE: STUDENT POST EDITED");
+  res.status(200).send("I AM THE RESPONSE: STUDENT POST EDITED");
 });
 /*DELETE*/
-router.delete("/", (req, res) => {
+router.delete("/:id", (req, res) => {
+  const studentsFilePath = path.join(__dirname, "students.json");
+  const fileAsBuffer = fs.readFileSync(studentsFilePath);
+  const fileAsString = fileAsBuffer.toString();
+  const studentsArray = JSON.parse(fileAsString);
+  /*come in precedenza LEGGIAMO il file*/
+
+  const idFromReq = req.params.id;
+
+  const newStudentArray = studentsArray.filter(
+    (student) => student.ID !== idFromReq
+  );
+  /* qui filtro e tengo visibile tutti quelli che non ha hanno L'id uguale a quello  del params.id */
+
   console.log(req);
-  res.send("I AM THE RESPONSE: STUDENT POST DELETED");
+  fs.writeFileSync(studentsFilePath, JSON.stringify(newStudentArray));
+  /*qui converto il mio nuovo array in stringa e lo riscrivo nel file JSON*/
+  res.status(204).send("I AM THE RESPONSE: STUDENT POST DELETED");
 });
 
 /*Abbiamo creato dei post, delete e put per permette al user di interagire con il nostro database(con i fetch)   */
