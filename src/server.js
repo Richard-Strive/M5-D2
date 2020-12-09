@@ -1,5 +1,6 @@
 const express = require("express");
 const studentsRoutes = require("./students/index");
+const projectsRoutes = require("./projects/index");
 /*importo il router dalla index.js */
 
 const server = express();
@@ -9,6 +10,7 @@ server.use(express.json());
 /* da configurare prima del route ed e' utilizzato per fixare i "undefined body" nei POST*/
 
 server.use("/students", studentsRoutes);
+server.use("/projects", projectsRoutes);
 /* qui dico al server di utilizzare il percorso che porta all'array di studenti  specificando il prefisso ("/students" che potrebbe essere arbitrario) e il percorso locale del mio file*/
 server.listen(port, () => {
   console.log("It's working", port);
