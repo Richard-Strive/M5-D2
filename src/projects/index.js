@@ -16,18 +16,19 @@ const fileReader = (file) => {
   return JSON.parse(fileAsString);
 };
 
-router.get("/", (req, res) => {
+router.get("/", (req, res, next) => {
   const projectsArray = fileReader("projects.json");
   res.send(projectsArray);
 });
-router.get("/:id", (req, res) => {
+/*Inserendo next tra i parametri e utitizzandolo come una funzione al suo interno "next()" verso la fine, abbiamo la possbilita' di mandare l'errore captati agli errorHandler del server che si trovano subito dopo i route*/
+router.get("/:id", (req, res, next) => {
   const projectsArray = fileReader("projects.json");
   const idFromReq = req.params.id;
   const project = projectsArray.filter((project) => project.ID === idFromReq);
   console.log(project);
   res.send(project);
 });
-router.post("/", (req, res) => {
+router.post("/", (req, res, next) => {
   const projectsArray = fileReader("projects.json");
   const newProject = req.body;
   newProject.ID = uniqid();
@@ -41,7 +42,7 @@ router.post("/", (req, res) => {
   res.status(201).send();
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", (req, res, next) => {
   const projectsArray = fileReader("projects.json");
 
   const newProjectArray = projectsArray.filter(
@@ -61,7 +62,7 @@ router.put("/:id", (req, res) => {
   console.log("PUT ID");
   res.status(200).send();
 });
-router.delete("/:id", (req, res) => {
+router.delete("/:id", (req, res, next) => {
   const projectsArray = fileReader("projects.json");
   const newProjectArray = projectsArray.filter(
     (project) => project.ID !== req.params.id
