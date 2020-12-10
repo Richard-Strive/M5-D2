@@ -59,12 +59,20 @@ router.put("/:id", (req, res) => {
   );
 
   console.log("PUT ID");
-  res.send("Hello i am the response");
+  res.status(200).send();
 });
 router.delete("/:id", (req, res) => {
   const projectsArray = fileReader("projects.json");
+  const newProjectArray = projectsArray.filter(
+    (project) => project.ID !== req.params.id
+  );
+
+  fs.writeFileSync(
+    path.join(__dirname, "projects.json"),
+    JSON.stringify(newProjectArray)
+  );
   console.log("DELETE ID");
-  res.send("Hello i am the response");
+  res.status(200).send();
 });
 
 module.exports = router;
