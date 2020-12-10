@@ -1,4 +1,5 @@
 const { Router } = require("express");
+const { body, validationResult } = require("express-validator");
 const express = require("express");
 
 const router = express.Router();
@@ -17,8 +18,13 @@ const fileReader = (file) => {
 };
 
 router.get("/", (req, res, next) => {
-  const projectsArray = fileReader("projects.json");
-  res.send(projectsArray);
+  try {
+    const projectsArray = fileReader("projects.jsons");
+    res.send(projectsArray);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
 });
 /*Inserendo next tra i parametri e utitizzandolo come una funzione al suo interno "next()" verso la fine, abbiamo la possbilita' di mandare l'errore captati agli errorHandler del server che si trovano subito dopo i route*/
 router.get("/:id", (req, res, next) => {
@@ -29,17 +35,20 @@ router.get("/:id", (req, res, next) => {
   res.send(project);
 });
 router.post("/", (req, res, next) => {
-  const projectsArray = fileReader("projects.json");
-  const newProject = req.body;
-  newProject.ID = uniqid();
-  projectsArray.push(newProject);
-
-  console.log(projectsArray);
-  fs.writeFileSync(
-    path.join(__dirname, "projects.json"),
-    JSON.stringify(projectsArray)
-  );
-  res.status(201).send();
+  try {
+    const projectsArray = fileReader("projects.jsond");
+    const newProject = { ...req.body, ID: uniqid(), postedAt: new Date() };
+    projectsArray.push(newProject);
+    console.log(projectsArray);
+    fs.writeFileSync(
+      path.join(__dirname, "projects.json"),
+      JSON.stringify(projectsArray)
+    );
+    res.status(201).send();
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
 });
 
 router.put("/:id", (req, res, next) => {
