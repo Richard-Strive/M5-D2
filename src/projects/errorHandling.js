@@ -16,7 +16,8 @@ const unauthorizedErrorHandler = (err, req, res, next) => {
 };
 const forbiddenErrorHandler = (err, req, res, next) => {
   if (err.httpStatusCode === 403) {
-    res.status(403).send("ERROR!!! FORBIDDEN. DON'T TRY IT AGAIN FAKE HACKER");
+    res.status(403).send(err.message);
+    /*("ERROR!!! FORBIDDEN. DON'T TRY IT AGAIN FAKE HACKER")*/
   }
   next(err);
 };

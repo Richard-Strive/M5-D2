@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { body, validationResult } = require("express-validator");
+const { body, validationResult, check } = require("express-validator");
 const express = require("express");
 
 const router = express.Router();
@@ -28,28 +28,50 @@ router.get("/", (req, res, next) => {
 });
 /*Inserendo next tra i parametri e utitizzandolo come una funzione al suo interno "next()" verso la fine, abbiamo la possbilita' di mandare l'errore captati agli errorHandler del server che si trovano subito dopo i route*/
 router.get("/:id", (req, res, next) => {
-  const projectsArray = fileReader("projects.json");
-  const idFromReq = req.params.id;
-  const project = projectsArray.filter((project) => project.ID === idFromReq);
-  console.log(project);
-  res.send(project);
-});
-router.post("/", (req, res, next) => {
   try {
-    const projectsArray = fileReader("projects.jsond");
-    const newProject = { ...req.body, ID: uniqid(), postedAt: new Date() };
-    projectsArray.push(newProject);
-    console.log(projectsArray);
-    fs.writeFileSync(
-      path.join(__dirname, "projects.json"),
-      JSON.stringify(projectsArray)
-    );
-    res.status(201).send();
-  } catch (error) {
-    console.log(error);
-    next(error);
+    const projectsArray = fileReader("projects.json");
+    const idFromReq = req.params.id;
+    const project = projectsArray.filter((project) => project.ID === idFromReq);
+    if (project.length > 0) {
+      res.send(project);
+    } else {
+      const err = new Error();
+      err.httpStatusCode = 404;
+      next(err);
+    }
+    console.log(project);
+  } catch (err) {
+    console.log(err);
   }
 });
+
+router.post(
+  "/",
+  [check("name").exists().withMessage("ASSHOLE WRITE YOUR NAME")],
+  (req, res, next) => {
+    const errors = validationResult(req);
+    try {
+      if (!errors.isEmpty()) {
+        const err = new Error();
+        err.message = errors;
+        err.httpStatusCode = 400;
+        next(err);
+      } else {
+        const projectsArray = fileReader("projects.jsond");
+        const newProject = { ...req.body, ID: uniqid(), postedAt: new Date() };
+        projectsArray.push(newProject);
+        console.log(projectsArray);
+        fs.writeFileSync(
+          path.join(__dirname, "projects.json"),
+          JSON.stringify(projectsArray)
+        );
+        res.status(201).send();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
 
 router.put("/:id", (req, res, next) => {
   const projectsArray = fileReader("projects.json");
